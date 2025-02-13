@@ -172,7 +172,6 @@
 							<span class="align-middle">Từ cấm</span>
 						</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="{{ route('comments.index') }}">
 							<i class="align-middle" data-feather="check-square"></i>
@@ -183,77 +182,52 @@
 			</div>
 		</nav>
 		<div class="main">
+			<!-- resources/views/banned-words/index.blade.php -->
+
 			<main class="content">
 				<div class="container-fluid p-0">
-					<h1 class="h3 mb-3"><strong>Blogs</strong> Management</h1>
+					<h1 class="h3 mb-3"><strong>Comments</strong> Management</h1>
 
-					<form action="{{ route('blogs.index') }}" method="GET" class="mb-3">
-						<input type="text" name="search" value="{{ request('search') }}" placeholder="Search blogs..." class="form-control d-inline-block w-25">
-						<button type="submit" class="btn btn-primary ml-2">Search</button>
-					</form>
 
-					<div class="row">
-						<div class="col-12 col-lg-8 col-xxl-9 d-flex">
-							<div class="card flex-fill">
-								<table class="table table-hover my-0">
-									<thead>
-										<tr>
-											<th>ID</th>
-											<th>Image</th>
-											<th>Title</th>
-											<th class="d-none d-xl-table-cell">Created At</th>
-											<th>Edit</th>
-											<th>Delete</th>
-										</tr>
-									</thead>
-									<tbody>
-										@foreach($blogs as $blog)
-										<tr>
-											<td>{{ $blog->id }}</td>
-											<td>
-												<img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" style="width: 100px; height: auto;">
-											</td>
-											<td>{{ $blog->title }}</td>
-											<td class="d-none d-xl-table-cell">{{ $blog->created_at->format('d/m/Y') }}</td>
-											<td>
-												<a href="{{ route('blogs.edit', $blog->id) }}" class="btn btn-warning btn-sm">Edit</a>
-											</td>
-											<td>
-												<form action="{{ route('blogs.destroy', $blog->id) }}" method="POST" style="display:inline;">
-													@csrf
-													@method('DELETE')
-													<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?')">Delete</button>
-												</form>
-											</td>
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
-								<div class="custom-pagination d-flex justify-content-center">
-									@if ($blogs->onFirstPage())
-									<span class="page-item disabled">Previous</span>
-									@else
-									<a href="{{ $blogs->previousPageUrl() }}" class="page-item">Previous</a>
-									@endif
 
-									@foreach ($blogs->getUrlRange(1, $blogs->lastPage()) as $page => $url)
-									<a href="{{ $url }}" class="page-item {{ $page == $blogs->currentPage() ? 'active' : '' }}">
-										{{ $page }}
-									</a>
-									@endforeach
+					<div class="card flex-fill">
+						<table class="table table-hover my-0">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Content</th>
+									<th>User</th>
+									<th>Created At</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach($comments as $comment)
+								<tr>
+									<td>{{ $comment->id }}</td>
+									<td>
+										@if(isset($comment->has_banned_word) && $comment->has_banned_word)
+										<span class="text-danger">This comment contains banned words!</span><br>
+										@endif
+										{{ $comment->content }}
+									</td>
+									<td>{{ $comment->user->name }}</td>
+									<td>{{ $comment->created_at->format('Y-m-d H:i:s') }}</td> <!-- Hiển thị ngày giờ -->
+									<td>
+										<form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline;">
+											@csrf
+											@method('DELETE')
+											<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this comment?')">Delete</button>
+										</form>
+									</td>
+								</tr>
+								@endforeach
+							</tbody>
+						</table>
 
-									@if ($blogs->hasMorePages())
-									<a href="{{ $blogs->nextPageUrl() }}" class="page-item">Next</a>
-									@else
-									<span class="page-item disabled">Next</span>
-									@endif
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 			</main>
-
 
 			<footer class="footer">
 				<div class="container-fluid">

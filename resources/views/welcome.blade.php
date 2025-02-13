@@ -86,7 +86,7 @@
 							<li><a href="#">Games</a></li>
 							<li><a href="{{ route('shop.index') }}">Blogs</a></li>
 							<li><a href="contact.html">Contact</a></li>
-							<li><a href="#">Sign In</a></li>
+							<li><a href="{{ route('login') }}">Sign In</a></li>
 						</ul>
 						<a class='menu-trigger'>
 							<span>Menu</span>
@@ -192,7 +192,7 @@
 				<div class="col-lg-3 col-md-6 mb-4">
 					<div class="item">
 						<div class="thumb">
-							<a href="{{ route('blogs.show', $blog->id) }}">
+							<a href="{{ route('blogs.detail', $blog->id) }}">
 								<img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" class="img-fluid rounded"> <!-- Added img-fluid for responsive images -->
 							</a>
 							@if($blog->image)

@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;  // Add this line for logging
+use Illuminate\Support\Facades\Log;  
 
 class BlogController extends Controller
 {
-    // Show the list of blogs
     public function index(Request $request)
     {
         $query = Blog::query();
@@ -19,12 +18,11 @@ class BlogController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        $blogs = $query->paginate(5); // Paginate the blogs
+        $blogs = $query->paginate(5); 
 
         return view('blogs.index', compact('blogs'));
     }
 
-    // Show the form to create a new blog
     public function create()
     {
         return view('blogs.create');
@@ -33,30 +31,26 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validate the incoming request data
             $request->validate([
                 'title' => 'required|string|max:255',
-                'content' => 'nullable', // Make content optional
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate image types and size
+                'content' => 'nullable', 
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
             ]);
 
-            // Handle image upload (if available)
             $imagePath = null;
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('img', 'public'); // Store image in public/img
+                $imagePath = $request->file('image')->store('img', 'public'); 
             }
 
-            // Create the blog post
             Blog::create([
                 'title' => $request->title,
-                'content' => $request->content,  // This will now be nullable
-                'image' => $imagePath, // Save image path
+                'content' => $request->content, 
+                'image' => $imagePath, 
             ]);
 
-            // Return a JSON response on success
             return response()->json(['message' => 'Blog created successfully.'], 200);
         } catch (\Exception $e) {
-            Log::error('Error creating blog: ' . $e->getMessage());  // Log error details
+            Log::error('Error creating blog: ' . $e->getMessage()); 
             return response()->json(['error' => 'An error occurred while creating the blog.'], 500);
         }
     }

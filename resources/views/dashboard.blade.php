@@ -57,6 +57,26 @@
 							<span class="align-middle">Blogs</span>
 						</a>
 					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ route('blogs.create') }}">
+							<i class="align-middle" data-feather="plus-circle"></i>
+							<span class="align-middle">Create Blog</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ route('words.index') }}">
+							<i class="align-middle" data-feather="check-square"></i>
+							<span class="align-middle">Từ cấm</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ route('comments.index') }}">
+							<i class="align-middle" data-feather="check-square"></i>
+							<span class="align-middle">Bình luận</span>
+						</a>
+					</li>
 				</ul>
 			</div>
 		</nav>
