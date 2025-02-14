@@ -280,7 +280,6 @@
     .comment .btn-primary {
       margin-top: 10px;
     }
-
   </style>
 
 </head>
@@ -395,11 +394,11 @@
       @endif
 
       <div id="reply-form-{{ $comment->id }}" style="display:none;">
-        <form action="{{ route('comment.reply', $comment->id) }}" method="POST">
+        <form action="{{ route('comment.reply', $comment->id) }}" method="POST" onsubmit="handleReplySubmit(event, {{ $comment->id }})">
           @csrf
-          <textarea name="content" class="form-control" placeholder="Your Reply" rows="3" required></textarea>
+          <textarea id="reply-textarea-{{ $comment->id }}" name="content" class="form-control" placeholder="Your Reply" rows="3" required></textarea>
+          <div id="reply-preview-{{ $comment->id }}" class="comment-preview"></div>
           <button type="submit" class="btn btn-primary mt-2">Post Reply</button>
-
           <button type="button" class="btn btn-danger mt-2" onclick="closeReplyForm({{ $comment->id }})">Close</button>
         </form>
       </div>
@@ -462,9 +461,10 @@
   <script src="{{ asset('assets/js/custom.js') }}"></script>
 
   <script>
+    // Banned word check for comment submission
     document.querySelector('form').addEventListener('submit', function(event) {
-      const bannedWords = @json($bannedWords);
-      const commentContent = document.querySelector('textarea[name="content"]').value;
+      const bannedWords = @json($bannedWords); // Get the banned words from the server
+      const commentContent = document.querySelector('textarea[name="content"]').value; // Content of the comment
 
       let foundBannedWords = [];
       let highlightedContent = commentContent;
@@ -472,7 +472,6 @@
       bannedWords.forEach(function(word) {
         if (commentContent.includes(word)) {
           foundBannedWords.push(word);
-          // Highlight the banned words in the content
           const regex = new RegExp(`(${word})`, 'gi');
           highlightedContent = highlightedContent.replace(regex, '<span class="highlight">$1</span>');
         }
@@ -481,10 +480,38 @@
       if (foundBannedWords.length > 0) {
         document.querySelector('.comment-preview').innerHTML = highlightedContent;
         alert('Your comment contains banned words: ' + foundBannedWords.join(', '));
-        event.preventDefault();
+        event.preventDefault(); // Prevent form submission
       }
     });
+
+    function checkBannedWordsForReply(event, commentId) {
+      const bannedWords = @json($bannedWords);
+      const replyContent = document.getElementById(`reply-textarea-${commentId}`).value; // Get content of the reply
+
+      let foundBannedWords = [];
+      let highlightedContent = replyContent;
+
+      bannedWords.forEach(function(word) {
+        if (replyContent.includes(word)) {
+          foundBannedWords.push(word);
+          const regex = new RegExp(`(${word})`, 'gi');
+          highlightedContent = highlightedContent.replace(regex, '<span class="highlight">$1</span>');
+        }
+      });
+
+      if (foundBannedWords.length > 0) {
+        document.getElementById(`reply-preview-${commentId}`).innerHTML = highlightedContent;
+        alert('Your reply contains banned words: ' + foundBannedWords.join(', '));
+        event.preventDefault(); // Prevent form submission
+      }
+    }
+
+    // Function to handle reply form submission with banned word check
+    function handleReplySubmit(event, commentId) {
+      checkBannedWordsForReply(event, commentId);
+    }
   </script>
+
 
 
   <div class="comment-preview"></div>

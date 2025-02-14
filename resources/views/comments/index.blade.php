@@ -198,6 +198,8 @@
 									<th>Content</th>
 									<th>User</th>
 									<th>Created At</th>
+									<th>Blog</th> <!-- New column for the link -->
+
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -214,12 +216,17 @@
 									<td>{{ $comment->user->name }}</td>
 									<td>{{ $comment->created_at->format('Y-m-d H:i:s') }}</td> <!-- Hiển thị ngày giờ -->
 									<td>
+										<a href="{{ route('blogs.detail', $comment->blog_id) }}" class="btn btn-info btn-sm" target="_blank">View Blog</a>
+									</td>
+									<td>
 										<form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="display:inline;">
 											@csrf
 											@method('DELETE')
 											<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this comment?')">Delete</button>
 										</form>
 									</td>
+									<!-- Add a column for the blog link -->
+									
 								</tr>
 								@endforeach
 							</tbody>
